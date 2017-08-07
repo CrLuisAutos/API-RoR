@@ -4,71 +4,62 @@ class SupportsController < ApplicationController
   # GET /supports
   # GET /supports.json
   def index
-    @supports = Support.all
+    supports = Support.all
+    render(json: supports, status: 200)
   end
 
   # GET /supports/1
   # GET /supports/1.json
   def show
-  end
-
-  # GET /supports/new
-  def new
-    @support = Support.new
-  end
-
-  # GET /supports/1/edit
-  def edit
+    support= Support.find_by params[:id]
+    if support!= nil
+      render(json: support, status: 200)   
+    else
+      render(json: support.errors, status: 404)
+    end 
   end
 
   # POST /supports
   # POST /supports.json
   def create
-    @support = Support.new(support_params)
-
-    respond_to do |format|
-      if @support.save
-        format.html { redirect_to @support, notice: 'Support was successfully created.' }
-        format.json { render :show, status: :created, location: @support }
-      else
-        format.html { render :new }
-        format.json { render json: @support.errors, status: :unprocessable_entity }
-      end
+    support= Support.new
+    support.detalle=params[:detalle]
+    support.estado=params[:estado]
+    support.titulo=params[:titulo]
+    
+    if support.save
+      render(json: support, status: 201 , location: support)
+    else 
+      render(json: support.errors, status: 422)
     end
   end
 
   # PATCH/PUT /supports/1
   # PATCH/PUT /supports/1.json
   def update
-    respond_to do |format|
-      if @support.update(support_params)
-        format.html { redirect_to @support, notice: 'Support was successfully updated.' }
-        format.json { render :show, status: :ok, location: @support }
-      else
-        format.html { render :edit }
-        format.json { render json: @support.errors, status: :unprocessable_entity }
-      end
-    end
+    support=Support.find_by params[:id]
+    if support!= nil
+      support.detalle=params[:detalle] ? params[:detalle]: support.detalle
+      support.estado=params[:estado] ? params[:estado]: support.estado
+      support.titulo=params[:titulo] ? params[:titulo]: support.titulo
+      if user.save
+        render(json: support, status: 201)
+      end   
+    else
+      render(json: support.errors, status: 404)
+    end 
   end
 
   # DELETE /supports/1
   # DELETE /supports/1.json
   def destroy
-    @support.destroy
-    respond_to do |format|
-      format.html { redirect_to supports_url, notice: 'Support was successfully destroyed.' }
-      format.json { head :no_content }
+   support=Support.find_by id:(params[:id])
+    if support != nil
+      if support.destroy
+        head 204
+      end
+    else
+       head 404
     end
   end
-
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_support
-      @support = Support.find(params[:id])
-    end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def support_params
-      params.require(:support).permit(:titulo, :detalle, :estado)
-    end
 end

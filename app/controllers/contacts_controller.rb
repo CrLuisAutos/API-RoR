@@ -1,74 +1,64 @@
 class ContactsController < ApplicationController
   before_action :set_contact, only: [:show, :edit, :update, :destroy]
-
-  # GET /contacts
-  # GET /contacts.json
-  def index
-    @contacts = Contact.all
+def index
+    contact = Contact.all
+    render(json: contact, status: 200)
   end
 
   # GET /contacts/1
   # GET /contacts/1.json
   def show
-  end
-
-  # GET /contacts/new
-  def new
-    @contact = Contact.new
-  end
-
-  # GET /contacts/1/edit
-  def edit
+    contact= Contact.find_by params[:id]
+    if contact!= nil
+      render(json: contact, status: 200)   
+    else
+      render(json: contact.errors, status: 404)
+    end 
   end
 
   # POST /contacts
   # POST /contacts.json
   def create
-    @contact = Contact.new(contact_params)
-
-    respond_to do |format|
-      if @contact.save
-        format.html { redirect_to @contact, notice: 'Contact was successfully created.' }
-        format.json { render :show, status: :created, location: @contact }
-      else
-        format.html { render :new }
-        format.json { render json: @contact.errors, status: :unprocessable_entity }
-      end
+    contact= Contact.new
+    contact.nombre=params[:nombre]
+    contact.apellido=params[:apellido]
+    contact.puesto=params[:puesto]
+    contact.telefono=params[:telefono]
+    
+    if contact.save
+      render(json: contact, status: 201 , location: contact)
+    else 
+      render(json: contact.errors, status: 422)
     end
   end
 
   # PATCH/PUT /contacts/1
   # PATCH/PUT /contacts/1.json
   def update
-    respond_to do |format|
-      if @contact.update(contact_params)
-        format.html { redirect_to @contact, notice: 'Contact was successfully updated.' }
-        format.json { render :show, status: :ok, location: @contact }
-      else
-        format.html { render :edit }
-        format.json { render json: @contact.errors, status: :unprocessable_entity }
-      end
-    end
+    contact=Contact.find_by params[:id]
+    if contact!= nil
+      contact.apellido=params[:apellido] ? params[:apellido]: contact.apellido
+      contact.nombre=params[:nombre] ? params[:nombre]: contact.nombre
+      contact.puesto=params[:puesto] ? params[:puesto]: contact.puesto
+      contact.telefono=params[:telefono] ? params[:telefono]: contact.telefono
+      if user.save
+        render(json: contact, status: 201)
+      end   
+    else
+      render(json: contact.errors, status: 404)
+    end 
   end
 
   # DELETE /contacts/1
   # DELETE /contacts/1.json
   def destroy
-    @contact.destroy
-    respond_to do |format|
-      format.html { redirect_to contacts_url, notice: 'Contact was successfully destroyed.' }
-      format.json { head :no_content }
+   contact=Contact.find_by id:(params[:id])
+    if contact != nil
+      if contact.destroy
+        head 204
+      end
+    else
+       head 404
     end
   end
-
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_contact
-      @contact = Contact.find(params[:id])
-    end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def contact_params
-      params.require(:contact).permit(:nombre, :apellido, :telefono, :puesto)
-    end
 end

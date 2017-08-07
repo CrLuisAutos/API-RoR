@@ -1,74 +1,63 @@
 class ReunionsController < ApplicationController
   before_action :set_reunion, only: [:show, :edit, :update, :destroy]
 
-  # GET /reunions
-  # GET /reunions.json
-  def index
-    @reunions = Reunion.all
+ def index
+    reunion = Reunion.all
+    render(json: reunion, status: 200)
   end
 
   # GET /reunions/1
   # GET /reunions/1.json
   def show
-  end
-
-  # GET /reunions/new
-  def new
-    @reunion = Reunion.new
-  end
-
-  # GET /reunions/1/edit
-  def edit
+    reunion= Reunion.find_by params[:id]
+    if reunion!= nil
+      render(json: reunion, status: 200)   
+    else
+      render(json: reunion.errors, status: 404)
+    end 
   end
 
   # POST /reunions
   # POST /reunions.json
   def create
-    @reunion = Reunion.new(reunion_params)
-
-    respond_to do |format|
-      if @reunion.save
-        format.html { redirect_to @reunion, notice: 'Reunion was successfully created.' }
-        format.json { render :show, status: :created, location: @reunion }
-      else
-        format.html { render :new }
-        format.json { render json: @reunion.errors, status: :unprocessable_entity }
-      end
+    reunion= Reunion.new
+    reunion.fecha=params[:fecha]
+    reunion.titulo=params[:titulo]
+    reunion.virtual=params[:virtual]
+    
+    if reunion.save
+      render(json: reunion, status: 201 , location: reunion)
+    else 
+      render(json: reunion.errors, status: 422)
     end
   end
 
   # PATCH/PUT /reunions/1
   # PATCH/PUT /reunions/1.json
   def update
-    respond_to do |format|
-      if @reunion.update(reunion_params)
-        format.html { redirect_to @reunion, notice: 'Reunion was successfully updated.' }
-        format.json { render :show, status: :ok, location: @reunion }
-      else
-        format.html { render :edit }
-        format.json { render json: @reunion.errors, status: :unprocessable_entity }
-      end
-    end
+    reunion=Reunion.find_by params[:id]
+    if Reunion!= nil
+      reunion.detalle=params[:detalle] ? params[:detalle]: reunion.detalle
+      reunion.estado=params[:estado] ? params[:estado]: reunion.estado
+      reunion.titulo=params[:titulo] ? params[:titulo]: reunion.titulo
+      if user.save
+        render(json: reunion, status: 201)
+      end   
+    else
+      render(json: reunion.errors, status: 404)
+    end 
   end
 
   # DELETE /reunions/1
   # DELETE /reunions/1.json
   def destroy
-    @reunion.destroy
-    respond_to do |format|
-      format.html { redirect_to reunions_url, notice: 'Reunion was successfully destroyed.' }
-      format.json { head :no_content }
+   reunion=Reunion.find_by id:(params[:id])
+    if reunion != nil
+      if reunion.destroy
+        head 204
+      end
+    else
+       head 404
     end
   end
-
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_reunion
-      @reunion = Reunion.find(params[:id])
-    end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def reunion_params
-      params.require(:reunion).permit(:titulo, :fecha, :virtual)
-    end
 end

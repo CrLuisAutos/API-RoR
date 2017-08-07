@@ -17,6 +17,8 @@ class UsersController < ApplicationController
     user= User.new
     user.nombre=params[:nombre]
     user.apellido=params[:apellido]
+    user.username=params[:username]
+    user.password_digest=params[:password]
     
     if user.save
       render(json: user, status: 201 , location: user)
