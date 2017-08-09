@@ -24,6 +24,7 @@ def index
     contact.apellido=params[:apellido]
     contact.puesto=params[:puesto]
     contact.telefono=params[:telefono]
+    contact.clients_id=params[:clients_id]
     
     if contact.save
       render(json: contact, status: 201 , location: contact)

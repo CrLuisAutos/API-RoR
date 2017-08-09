@@ -24,9 +24,11 @@ class ReunionsController < ApplicationController
     reunion.fecha=params[:fecha]
     reunion.titulo=params[:titulo]
     reunion.virtual=params[:virtual]
-    
+    reunion.users_id=params[:users_id]
+    reunion.clients_id=params[:clients_id]
     if reunion.save
       render(json: reunion, status: 201 , location: reunion)
+    end
     else 
       render(json: reunion.errors, status: 422)
     end
