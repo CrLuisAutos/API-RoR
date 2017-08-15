@@ -54,12 +54,26 @@ class SupportsController < ApplicationController
       support.detalle=params[:detalle] ? params[:detalle]: support.detalle
       support.estado=params[:estado] ? params[:estado]: support.estado
       support.titulo=params[:titulo] ? params[:titulo]: support.titulo
-      if user.save
-        render(json: support, status: 201)
-      end   
-    else
-      render(json: support.errors, status: 404)
-    end 
+      if support.valid? && Client.exists?(support.clients_id)  
+        if support.users_id != nil
+          if User.exists?(support.users_id)
+            if support.save
+              render(json: support, status: 201 , location: support)
+            else
+              render(json: support.errors, status: 422)
+            end  
+          else
+              render(json: support.errors, status: 422)
+          end  
+        elsif support.save
+          render(json: support, status: 201 , location: support)
+        end
+      else 
+        render(json: support.errors, status: 422)
+      end
+    else 
+      render(json: support.errors, status: 422)
+    end
   end
 
   # DELETE /supports/1
