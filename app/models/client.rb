@@ -1,7 +1,7 @@
 class Client < ApplicationRecord
-	has_many :contact
-	has_many :reunion
-	has_many :support
+	has_and_belongs_to_many :contact
+	has_and_belongs_to_many :reunion
+	has_and_belongs_to_many :support
 	validates :nombre, presence: true, length: { in: 1..100 }
 	validates :cedula, presence: true, uniqueness: true , length: { in: 8..20 }
 	validates :sector, presence: true,  length: { in: 1..100 }

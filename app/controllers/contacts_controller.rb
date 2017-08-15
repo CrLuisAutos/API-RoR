@@ -1,6 +1,5 @@
 class ContactsController < ApplicationController
-  before_action :set_contact, only: [:show, :edit, :update, :destroy]
-def index
+  def index
     contact = Contact.all
     render(json: contact, status: 200)
   end
@@ -12,7 +11,7 @@ def index
     if contact!= nil
       render(json: contact, status: 200)   
     else
-      render(json: contact.errors, status: 404)
+      head 404
     end 
   end
 
@@ -21,15 +20,17 @@ def index
   def create
     contact= Contact.new
     contact.nombre=params[:nombre]
+    contact.email=params[:email]
     contact.apellido=params[:apellido]
     contact.puesto=params[:puesto]
     contact.telefono=params[:telefono]
     contact.clients_id=params[:clients_id]
-    
-    if contact.save
-      render(json: contact, status: 201 , location: contact)
+    if contact.valid? && Client.exists?(contact.clients_id)
+      if contact.save
+        render(json: contact, status: 201 , location: contact)
+      end
     else 
-      render(json: contact.errors, status: 422)
+        render(json: contact.errors, status: 422)
     end
   end
 
@@ -39,15 +40,19 @@ def index
     contact=Contact.find_by params[:id]
     if contact!= nil
       contact.apellido=params[:apellido] ? params[:apellido]: contact.apellido
+      contact.email=params[:email]
       contact.nombre=params[:nombre] ? params[:nombre]: contact.nombre
       contact.puesto=params[:puesto] ? params[:puesto]: contact.puesto
       contact.telefono=params[:telefono] ? params[:telefono]: contact.telefono
-      if user.save
-        render(json: contact, status: 201)
-      end   
-    else
-      render(json: contact.errors, status: 404)
-    end 
+      contact.clients_id=params[:clients_id] ? params[:clients_id]: contact.clients_id
+    if contact.valid? && Client.exists?(contact.clients_id)
+      if contact.save
+        render(json: contact, status: 201 , location: contact)
+      end
+    end  
+    else 
+        render(json: contact.errors, status: 422)
+    end
   end
 
   # DELETE /contacts/1

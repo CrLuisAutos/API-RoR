@@ -1,7 +1,6 @@
 class ReunionsController < ApplicationController
-  before_action :set_reunion, only: [:show, :edit, :update, :destroy]
 
- def index
+  def index
     reunion = Reunion.all
     render(json: reunion, status: 200)
   end
@@ -13,7 +12,7 @@ class ReunionsController < ApplicationController
     if reunion!= nil
       render(json: reunion, status: 200)   
     else
-      render(json: reunion.errors, status: 404)
+      head 404
     end 
   end
 
@@ -21,14 +20,24 @@ class ReunionsController < ApplicationController
   # POST /reunions.json
   def create
     reunion= Reunion.new
-    reunion.fecha=params[:fecha]
     reunion.titulo=params[:titulo]
-    reunion.virtual=params[:virtual]
+    reunion.virtual=params[:virtual] ? params[:virtual] : false 
     reunion.users_id=params[:users_id]
     reunion.clients_id=params[:clients_id]
-    if reunion.save
-      render(json: reunion, status: 201 , location: reunion)
-    end
+    if reunion.valid? && Client.exists?(reunion.clients_id)  
+      if reunion.users_id != nil
+        if User.exists?(reunion.users_id)
+          if reunion.save
+            render(json: reunion, status: 201 , location: reunion)
+          else
+            render(json: reunion.errors, status: 422)
+          end  
+        else
+            render(json: reunion.errors, status: 422)
+        end  
+      elsif reunion.save
+        render(json: reunion, status: 201 , location: reunion)
+      end
     else 
       render(json: reunion.errors, status: 422)
     end
@@ -38,16 +47,31 @@ class ReunionsController < ApplicationController
   # PATCH/PUT /reunions/1.json
   def update
     reunion=Reunion.find_by params[:id]
-    if Reunion!= nil
-      reunion.detalle=params[:detalle] ? params[:detalle]: reunion.detalle
-      reunion.estado=params[:estado] ? params[:estado]: reunion.estado
+    if reunion!= nil
       reunion.titulo=params[:titulo] ? params[:titulo]: reunion.titulo
-      if user.save
-        render(json: reunion, status: 201)
-      end   
-    else
-      render(json: reunion.errors, status: 404)
-    end 
+      reunion.virtual=params[:virtual] ? params[:virtual]: reunion.virtual
+      reunion.clients_id=params[:clients_id] ? params[:clients_id] : reunion.clients_id
+      reunion.users_id=params[:users_id]
+      if reunion.valid? && Client.exists?(reunion.clients_id)  
+        if reunion.users_id != nil
+          if User.exists?(reunion.users_id)
+            if reunion.save
+              render(json: reunion, status: 201 , location: reunion)
+            else
+              render(json: reunion.errors, status: 422)
+            end  
+          else
+              render(json: reunion.errors, status: 422)
+          end  
+        elsif reunion.save
+          render(json: reunion, status: 201 , location: reunion)
+        end
+      else 
+        render(json: reunion.errors, status: 422)
+      end
+    else 
+      render(json: reunion.errors, status: 422)
+    end
   end
 
   # DELETE /reunions/1

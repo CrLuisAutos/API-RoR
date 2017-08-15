@@ -1,7 +1,5 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :edit, :update, :destroy]
-
-def index
+  def index
     client = Client.all
     render(json: client, status: 200)
   end
@@ -10,10 +8,10 @@ def index
   # GET /clients/1.json
   def show
     client= Client.find_by params[:id]
-    if client!= nil
+    if client != nil
       render(json: client, status: 200)   
     else
-      render(json: client.errors, status: 404)
+      head 404
     end 
   end
 
@@ -21,13 +19,12 @@ def index
   # POST /clients.json
   def create
     client= Client.new
-    client.cedula=params[:cedula]
-    client.sector=params[:sector]
-    client.nombre=params[:nombre]
-    client.telefono=params[:telefono]
-    client.pagina=params[:pagina]
-    client.direccion=params[:direccion]
-    
+    client.cedula= params[:cedula]
+    client.sector= params[:sector]
+    client.nombre= params[:nombre]
+    client.telefono= params[:telefono]
+    client.pagina= params[:pagina]
+    client.direccion= params[:direccion]
     if client.save
       render(json: client, status: 201 , location: client)
     else 
@@ -63,7 +60,7 @@ def index
         head 204
       end
     else
-       head 404
+        head 404
     end
   end
 end

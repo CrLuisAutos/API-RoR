@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170806225203) do
+ActiveRecord::Schema.define(version: 20170815025957) do
 
   create_table "clients", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "nombre"
@@ -30,14 +30,20 @@ ActiveRecord::Schema.define(version: 20170806225203) do
     t.string   "puesto"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "clients_id"
+    t.string   "email"
+    t.index ["clients_id"], name: "index_contacts_on_clients_id", using: :btree
   end
 
   create_table "reunions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "titulo"
-    t.datetime "fecha"
     t.boolean  "virtual"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "users_id"
+    t.integer  "clients_id"
+    t.index ["clients_id"], name: "index_reunions_on_clients_id", using: :btree
+    t.index ["users_id"], name: "index_reunions_on_users_id", using: :btree
   end
 
   create_table "supports", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -46,6 +52,10 @@ ActiveRecord::Schema.define(version: 20170806225203) do
     t.string   "estado"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "users_id"
+    t.integer  "clients_id"
+    t.index ["clients_id"], name: "index_supports_on_clients_id", using: :btree
+    t.index ["users_id"], name: "index_supports_on_users_id", using: :btree
   end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -57,4 +67,9 @@ ActiveRecord::Schema.define(version: 20170806225203) do
     t.string   "password_digest"
   end
 
+  add_foreign_key "contacts", "clients", column: "clients_id"
+  add_foreign_key "reunions", "clients", column: "clients_id"
+  add_foreign_key "reunions", "users", column: "users_id"
+  add_foreign_key "supports", "clients", column: "clients_id"
+  add_foreign_key "supports", "users", column: "users_id"
 end

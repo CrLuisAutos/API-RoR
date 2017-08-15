@@ -1,5 +1,4 @@
 class SupportsController < ApplicationController
-  before_action :set_support, only: [:show, :edit, :update, :destroy]
 
   # GET /supports
   # GET /supports.json
@@ -15,7 +14,7 @@ class SupportsController < ApplicationController
     if support!= nil
       render(json: support, status: 200)   
     else
-      render(json: support.errors, status: 404)
+      head 404
     end 
   end
 
@@ -26,9 +25,22 @@ class SupportsController < ApplicationController
     support.detalle=params[:detalle]
     support.estado=params[:estado]
     support.titulo=params[:titulo]
-    
-    if support.save
-      render(json: support, status: 201 , location: support)
+    support.clients_id=params[:clients_id]
+    support.users_id=params[:users_id]
+    if support.valid? && Client.exists?(support.clients_id)  
+      if support.users_id != nil
+        if User.exists?(support.users_id)
+          if support.save
+            render(json: support, status: 201 , location: support)
+          else
+            render(json: support.errors, status: 422)
+          end  
+        else
+            render(json: support.errors, status: 422)
+        end  
+      elsif support.save
+        render(json: support, status: 201 , location: support)
+      end
     else 
       render(json: support.errors, status: 422)
     end

@@ -1,9 +1,8 @@
 Rails.application.routes.draw do
-  post 'user_token' => 'user_token#create'
-  resources :supports
-  resources :reunions
-  resources :contacts
-  resources :clients
-  resources :users
+  resources :supports, only: [:index, :create, :show,:update, :destroy]
+  resources :reunions, only: [:index, :create, :show,:update, :destroy]
+  resources :contacts, only: [:index, :create, :show,:update, :destroy]
+  resources :clients, only: [:index, :create, :show,:update, :destroy]
+  resources :users, only: [:index, :create, :show,:update, :destroy]
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
