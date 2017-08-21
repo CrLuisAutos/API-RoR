@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    user= User.find_by params[:id]
+    user= User.find_by_id(params[:id])
     if user!= nil
       render(json: user, status: 200)   
     else
@@ -28,10 +28,12 @@ class UsersController < ApplicationController
   end
 
   def update
-    user=User.find_by params[:id]
+    user=User.find_by_id params[:id]
     if user!= nil
       user.nombre=params[:nombre] ? params[:nombre]: user.nombre
       user.apellido=params[:apellido] ? params[:apellido]: user.apellido
+      user.username=params[:username] ? params[:username]: user.username
+      user.password_digest=params[:password] ? params[:password]: user.password_digest
       if user.save
         render(json: user, status: 201)
       end   
@@ -41,7 +43,7 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    user=User.find_by id:(params[:id])
+    user=User.find_by_id(params[:id])
     if user != nil
       if user.destroy
         head 204

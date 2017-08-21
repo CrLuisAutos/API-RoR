@@ -7,7 +7,7 @@ class ClientsController < ApplicationController
   # GET /clients/1
   # GET /clients/1.json
   def show
-    client= Client.find_by params[:id]
+    client= Client.find_by_id params[:id]
     if client != nil
       render(json: client, status: 200)   
     else
@@ -35,7 +35,7 @@ class ClientsController < ApplicationController
   # PATCH/PUT /clients/1
   # PATCH/PUT /clients/1.json
   def update
-    client=Client.find_by params[:id]
+    client=Client.find_by_id params[:id]
     if client!= nil
       client.cedula=params[:cedula] ? params[:cedula]: client.cedula
       client.sector=params[:sector] ? params[:sector]: client.sector
@@ -54,7 +54,7 @@ class ClientsController < ApplicationController
   # DELETE /clients/1
   # DELETE /clients/1.json
   def destroy
-   client=Client.find_by id:(params[:id])
+   client=Client.find_by_id(params[:id])
     if client != nil
       if client.destroy
         head 204

@@ -1,5 +1,4 @@
 class Contact < ApplicationRecord
-	has_one :client
 	validates :email, presence: true,  length: { in: 1..250 }
 	validates :nombre, presence: true, length: { in: 1..100 }
 	validates :clients_id, presence: true, numericality: {only_integer: true}

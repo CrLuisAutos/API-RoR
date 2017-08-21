@@ -79,6 +79,7 @@ GEM
       mini_portile2 (~> 2.2.0)
     puma (3.9.1)
     rack (2.0.3)
+    rack-cors (1.0.1)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.0.5)
@@ -157,6 +158,7 @@ DEPENDENCIES
   jquery-rails
   mysql2
   puma (~> 3.0)
+  rack-cors
   rails (~> 5.0.5)
   sass-rails (~> 5.0)
   turbolinks (~> 5)

@@ -10,7 +10,7 @@ class SupportsController < ApplicationController
   # GET /supports/1
   # GET /supports/1.json
   def show
-    support= Support.find_by params[:id]
+    support= Support.find_by_id params[:id]
     if support!= nil
       render(json: support, status: 200)   
     else
@@ -48,12 +48,14 @@ class SupportsController < ApplicationController
 
   # PATCH/PUT /supports/1
   # PATCH/PUT /supports/1.json
-  def update
-    support=Support.find_by params[:id]
+   def update
+    support= Support.find_by_id params[:id]
     if support!= nil
+      support.titulo=params[:titulo] ? params[:titulo]: support.titulo
       support.detalle=params[:detalle] ? params[:detalle]: support.detalle
       support.estado=params[:estado] ? params[:estado]: support.estado
-      support.titulo=params[:titulo] ? params[:titulo]: support.titulo
+      support.clients_id=params[:clients_id] ? params[:clients_id] : support.clients_id
+      support.users_id=params[:users_id]
       if support.valid? && Client.exists?(support.clients_id)  
         if support.users_id != nil
           if User.exists?(support.users_id)
@@ -79,7 +81,7 @@ class SupportsController < ApplicationController
   # DELETE /supports/1
   # DELETE /supports/1.json
   def destroy
-   support=Support.find_by id:(params[:id])
+   support=Support.find_by_id(params[:id])
     if support != nil
       if support.destroy
         head 204

@@ -7,7 +7,7 @@ class ContactsController < ApplicationController
   # GET /contacts/1
   # GET /contacts/1.json
   def show
-    contact= Contact.find_by params[:id]
+    contact= Contact.find_by_id params[:id]
     if contact!= nil
       render(json: contact, status: 200)   
     else
@@ -37,7 +37,7 @@ class ContactsController < ApplicationController
   # PATCH/PUT /contacts/1
   # PATCH/PUT /contacts/1.json
   def update
-    contact=Contact.find_by params[:id]
+    contact=Contact.find_by_id params[:id]
     if contact!= nil
       contact.apellido=params[:apellido] ? params[:apellido]: contact.apellido
       contact.email=params[:email]
@@ -58,7 +58,7 @@ class ContactsController < ApplicationController
   # DELETE /contacts/1
   # DELETE /contacts/1.json
   def destroy
-   contact=Contact.find_by id:(params[:id])
+   contact=Contact.find_by_id(params[:id])
     if contact != nil
       if contact.destroy
         head 204

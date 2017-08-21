@@ -8,7 +8,7 @@ class ReunionsController < ApplicationController
   # GET /reunions/1
   # GET /reunions/1.json
   def show
-    reunion= Reunion.find_by params[:id]
+    reunion= Reunion.find_by_id params[:id]
     if reunion!= nil
       render(json: reunion, status: 200)   
     else
@@ -46,7 +46,7 @@ class ReunionsController < ApplicationController
   # PATCH/PUT /reunions/1
   # PATCH/PUT /reunions/1.json
   def update
-    reunion=Reunion.find_by params[:id]
+    reunion=Reunion.find_by_id params[:id]
     if reunion!= nil
       reunion.titulo=params[:titulo] ? params[:titulo]: reunion.titulo
       reunion.virtual=params[:virtual] ? params[:virtual]: reunion.virtual
@@ -77,7 +77,7 @@ class ReunionsController < ApplicationController
   # DELETE /reunions/1
   # DELETE /reunions/1.json
   def destroy
-   reunion=Reunion.find_by id:(params[:id])
+   reunion=Reunion.find_by_id(params[:id])
     if reunion != nil
       if reunion.destroy
         head 204
